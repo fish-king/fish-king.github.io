@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Off-policy以及PPO基础概念</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+        <style>
+        .ptext{text-indent: 2em;}
+        </style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="../../index.html" class="title">主页</a>
+				<nav>
+					<ul>
+						<li><a href="blog1.html" class="active">previous</a></li>
+						<li><a href="#">next</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h2 class="major">Off-policy以及PPO基础概念</h2>
+							<p class="ptext">On-policy就是模型自己先去玩游戏，根据自己获得的data来优化自己的函数从<a href="blog1.html">上一篇blog</a>最后所提供的R'也能看出我们进行一次gradient ascent后，我们模型参数θ发生改变，R'的值也发生变化，因此只能再去sample足够的data再次gradient ascent，循环优化，而Off-policy就能纠正这个缺点。</p>
+                            <div class="row gtr-uniform">
+                                    <div class="col-4"></div>
+                                    <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic1.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-4"></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">Off-policy就是用另一个agent与environment互动得到的数据来对我们的agent进行优化，这样我们九年重复利用data。</p>
+                            <div class="row gtr-uniform">
+                                    <div class="col-4"></div>
+                                    <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic2.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-4"></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">期望的定义完成转换。</p>
+                            <div class="row gtr-uniform">
+                                    <div class="col-6"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic3.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-6"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic4.PNG" alt="" />
+                                    </span></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">转换前后期望相同，方差可能差距过大，在sample较少情况、p(x)和q(x)差距过大，p(x) sample的点落在左侧，期望为负，而q(x) sample在右侧，与结果相反，当然，sample数量足够多会出现在左侧的点，通过p(x)/q(x)修正会得到极大的权重，总体符合预期。</p>
+                            <div class="row gtr-uniform">
+                                    <div class="col-6"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic5.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-6"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic6.PNG" alt="" />
+                                    </span></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">上面的公式推演到模型中如上图，J是逆推得到的reward价值函数而非导数。</p>
+                            <h2>PPO/TRPO</h2>
+                            <div class="row gtr-uniform">
+                                    <div class="col-4"></div>
+                                    <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic7.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-4"></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">我们不断训练过程中，我们p(x)和q(x)的差距会越来越大，这时，我们就要加入constraint,也就是PPO方法。</p>
+                            <div class="row gtr-uniform">
+                                    <div class="col-4"></div>
+                                    <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic8.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-4"></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">PPO中KL函数并不是正则化的参数差，而是模型预测值的差值。通过调整β可以控制KL权值，差距过大，增大β使模型降低差距，差距小，则减小β降低对模型拟合的影响。TPRO将KL函数单独考虑，模型实现复杂，效果与PPO类似，故不讨论。</p>
+                            <div class="row gtr-uniform">
+                                    <div class="col-4"></div>
+                                    <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic9.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-4"></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">PPO2中clip(a,1 - α,1 + α)函数，当a &lt 1 - α时,clip(a,1 - α,1 + α) = 1 - α,当a &gt 1 + α时，clip(a,1 - α,1 + α) = 1 + α，当1 - α &lt a &lt 1 + α时,clip(a,1 - α,1 + α) = a，相当于我们给价值函数J增加限制，当A为正，我们增大预测概率，但两者比值相差过大，我们取1 + α，当A为负，我们减小预测概率，但两者比值相差过大，我们取1 - α。（图中红色实线）相比于PPO实现更加简便，目前我觉得无脑用就行。</p>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+
+	</body>
+</html>
