@@ -72,7 +72,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">两种方法的差别，对于MC方法，每次训练累计的reward都可能把不同，variance较大，而TD训练则可以避免这个问题，当然，TD训练过程中，V^π(s)不一定准确的。</p>
+                            <p class="ptext">两种方法的差别，对于MC方法，每次训练累计的reward都可能把不同，variance较大，并且每次训练都要求到游戏结束才能获得数据，而TD训练则可以避免这个问题，当然，TD训练过程中，V^π(s)不一定准确的。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic5.PNG" alt="" />
@@ -104,7 +104,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">训练类似TD训练方法，但两个Q相同的话我们训练过程中Q改变，output值会不断变化，因此，我们固定output的Q function，进行N次Regression后用updata后的Q的替换ouput的Q,继续训练。</p>
+                            <p class="ptext">在训练中，如果某些情况未sample到，那我们对该情况的value估值为初始值，以后的action也不会采用其他值，因此我们需要模型对environment做出exploration，这样sample样例才多样性。有两种方法，Epsilon Greedy和Boltzmann Exploration，图上有详解。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic10.PNG" alt="" />
@@ -112,18 +112,10 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">在训练中，如果某些情况未sample到，那我们对该情况的value估值为初始值，以后的action也不会采用其他值，因此我们需要模型对environment做出exploration，这样sample样例才多样性。有两种方法，Epsilon Greedy和Boltzmann Exploration，图上有详解。</p>
-                            <div class="row gtr-uniform">
-                                    <div class="col-4"></div>
-                                    <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic11.PNG" alt="" />
-                                    </span></div>
-                                    <div class="col-4"></div>
-                            </div>
-                            <p></p>
                             <p class="ptext">训练中，我们采用一个buffer存储数据，buffer中不断增加新数据，满了则删除旧数据。这样有两点优点，其一数据重复使用，这样类似off-policy提升效率，其二提升数据多样性，使模型拟合更好。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
-                                    <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic12.PNG" alt="" />
+                                    <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic11.PNG" alt="" />
                                     </span></div>
                                     <div class="col-4"></div>
                             </div>
