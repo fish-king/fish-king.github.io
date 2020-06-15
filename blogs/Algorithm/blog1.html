@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>KM算法理解及python实现</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+        <style>
+        .ptext{text-indent: 2em;}
+        </style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="../../index.html" class="title">主页</a>
+				<nav>
+					<ul>
+						<li><a href="#">previous</a></li>
+						<li><a href="#" class="active">next</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h2 class="major">KM算法理解及python实现</h2>
+							<p class="ptext">KM算法是用于寻找带权二分图最佳匹配的算法，首先，KM算法是完备匹配算法，即二分图数目较少的一边所有点都要求在另一边有对应不重复匹配点；其次，对于所有匹配方式，要求对应边的权值最大。</p>
+                            <p></p>
+                            <p class="ptext">该算法难点在于对增广路的理解，以下图例子说明:</p>
+                            <div class="row gtr-uniform">
+                                    <div class="col-4"></div>
+                                    <div class="col-4"><span class="image fit"><img src="../../images/ALImage/blog1/blog1_pic1.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-4"></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">黄色边和红字圆代表已匹配，蓝色边和黑字圆表示未匹配，那么我们增广路就是找两个未匹配的圆即两个黑字圆，使他们之间的路径为蓝黄相间即可，例如6-5-4-1-2-3，当然6-3也是一种特殊情况。在找到一条增广路后，将路径上边的颜色互换，新的黄色边会比原黄色边多1，这样我们就多匹配了一条边。</p>
+                            <p></p>
+                            <p class="ptext">增广路能帮助我们解决完备匹配问题，那剩下的仅有权值问题了。同样以图说明:</p>
+                            <div class="row gtr-uniform">
+                                    <div class="col-4"></div>
+                                    <div class="col-4"><span class="image fit"><img src="../../images/ALImage/blog1/blog1_pic2.PNG" alt="" />
+                                    </span></div>
+                                    <div class="col-4"></div>
+                            </div>
+                            <p></p>
+                            <p class="ptext">首先对每个需要匹配的黄色圆，我们给他们附上他们所连接边的最大权值，可以理解为他们的预期，而右侧蓝色圆则预期都为0，人数多没有发言权，优先满足人数少的一边。我们从左侧圆开始遍历找左右侧预期和等于对应权值边，若对面圆未匹配，则匹配成功。因此，对1得1-4，匹配成功；同样对2得3-6；然而当为5进行匹配时，对面的6已经被3匹配，这时我们就会让不是主角的一方退让，3会找自身又没有另一条同样符合条件的边，我们得到的结果是没有，发生冲突。此时为了解决冲突，所有参与方都要做出调整，对于左侧，他们本来预期高，因此要进行下调，而右侧感到有人抢他，所以上调身价。这个下调和上调的值就是能让冲突解决的值，这里就是能让3-2匹配3下降的值2，这样356圆预期变为012，继续对3进行匹配。</p>
+                            <p></p>
+                            <p class="ptext">这里肯定有疑问，要是3只有一条边怎么办，没办法下调，别问，问就不是完备匹配！代码如下：</p>
+                            <pre><code>import numpy as np
+class KM_match(object):
+    def __init__(self,match_data):
+        #待匹配数据，邻接矩阵存储 num_left <= num_right
+        self.match_data = match_data
+        self.num_left = len(self.match_data)
+        self.num_right = len(self.match_data[0])
+        
+        #左右侧最大期望
+        self.left_max = np.array([max(x) for x in self.match_data])
+        self.right_max = np.zeros(self.num_right)
+        
+        #标记是否被访问过
+        self.visit_left = [False] * self.num_left
+        self.visit_right = [False] * self.num_right
+        
+        #记录匹配信息
+        self.match = np.empty(self.num_right) * np.nan
+        
+        #便于记录下调和上调的最小值
+        self.slack = np.ones(self.num_right) * np.inf
+        
+    def dfs(self,left):
+        self.visit_left[left] = True
+        for right in range(self.num_right):
+            if(self.visit_right[right]):
+                continue
+            gap = self.left_max[left] + self.right_max[right] - self.match_data[left][right]
+            if(gap == 0):
+                self.visit_right[right] = True
+                if(np.isnan(self.match[right]) or self.dfs(int(self.match[right]))):
+                    self.match[right] = left
+                    return True
+            else:
+                self.slack[right] = min(self.slack[right],gap)
+        return False
+
+    def KM(self):
+        for left in range(self.num_left):
+            for i in range(len(self.slack)):
+                self.slack[i] = np.inf
+            
+            #完备匹配，匹配不出来别想继续
+            while(True):
+                for i in range(len(self.visit_left)):
+                    self.visit_left[i] = False
+                for i in range(len(self.visit_right)):
+                    self.visit_right[i] = False
+
+                if(self.dfs(left)):
+                    #未冲突匹配成功
+                    break
+                
+                #冲突，上调或下调预期值
+                d = np.inf
+                for right in range(self.num_right):
+                    if not self.visit_right[right]:
+                        d = min(d,self.slack[right])
+                for i in range(self.num_left):
+                    if self.visit_left[i]:
+                        self.left_max[i] -= d
+                for j in range(self.num_right):
+                    if self.visit_right[j]:
+                        self.right_max[j] += d
+                    else:
+                        self.slack[j] -= d</code></pre>
+                        <p class="ptext">KM算法由于是完备匹配，对数据有限制，我会在后续继续学习网络流算法解决这个问题。</p>
+						</div>
+					</section>
+                    <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
+                        <div class="message" style="opacity:0"></div>
+                        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+                    <div class="hide-button">隐藏</div>
+			</div>
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li>
+                        <li><span id="busuanzi_value_page_pv"></span> Hits</li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <!--引入css文件-->
+            <link rel="stylesheet" href="../../assets/css/live2d.css" />
+
+            <!--引入js文件-->
+            <script type="text/javascript">
+                    var message_Path = "../../assets/message.json";
+                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名，必须带斜杠
+            </script>
+            <script type="text/javascript" src="../../assets/js/live2d.js"></script>
+            <script type="text/javascript" src="../../assets/js/message.js"></script>
+            <script type="text/javascript">
+                loadlive2d("live2d", "../../assets/model/tia/model.json");
+            </script>
+	</body>
+</html>

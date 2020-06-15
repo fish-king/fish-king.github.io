@@ -95,14 +95,11 @@
                             <p class="ptext">PPO2中clip(a,1 - α,1 + α)函数，当a &lt 1 - α时,clip(a,1 - α,1 + α) = 1 - α,当a &gt 1 + α时，clip(a,1 - α,1 + α) = 1 + α，当1 - α &lt a &lt 1 + α时,clip(a,1 - α,1 + α) = a，相当于我们给价值函数J增加限制，当A为正，我们增大预测概率，但两者比值相差过大，我们取1 + α，当A为负，我们减小预测概率，但两者比值相差过大，我们取1 - α。（图中红色实线）相比于PPO实现更加简便，目前我觉得无脑用就行。</p>
 						</div>
 					</section>
-
+                    <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
+                        <div class="message" style="opacity:0"></div>
+                        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+                    <div class="hide-button">隐藏</div>
 			</div>
-            <div id="landlord" style="position: fixed; z-index: 10; left: 82%; bottom: 0">
-
-                <div class="message" style="opacity:0"></div>
-                <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
-                <div class="hide-button">隐藏</div>
-            </div>
 		<!-- Footer -->
 			<footer id="footer" class="wrapper alt">
 				<div class="inner">
