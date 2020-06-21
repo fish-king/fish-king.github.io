@@ -124,8 +124,72 @@ class KM_match(object):
                         self.right_max[j] += d
                     else:
                         self.slack[j] -= d</code></pre>
-                        <p class="ptext">KM算法由于是完备匹配，对数据有限制，我会在后续继续学习网络流算法解决这个问题。</p>
-						</div>
+                        <p class="ptext">以上未KM算法的dfs实现，但实际复杂度为O(n4)，在数据过大极易超时，下面是KM算法的O(n3) bfs实现。</p>
+						<pre><code>import numpy as np
+class km_match():
+    def __init__(self):
+        pass
+    def init_data(self,match_data):
+
+        self.match_data = match_data
+        self.num_left = len(self.match_data)
+        self.num_right = len(self.match_data[0])
+        
+        #左右侧最大期望
+        self.lx = np.zeros(self.num_left)
+        self.ly = np.zeros(self.num_right)
+        
+        #标记是否被访问过
+        self.visit_right = [False] * self.num_right
+        
+        #记录匹配信息
+        self.linky = np.zeros(self.num_right)
+        
+        #便于记录下调和上调的最小值
+        self.slack = np.zeros(self.num_right)
+        
+    def bfs(self,k):
+        px = 0
+        py = 0
+        yy = 0
+        pre = np.zeros(self.num_right)
+        for i in range(1,self.num_right):
+            self.slack[i] = np.inf
+        self.linky[py] = k
+        while True:
+            d = np.inf
+            px = int(self.linky[py])
+            self.visit_right[py] = True
+            for i in range(1,self.num_right):
+                if not self.visit_right[i]:
+                    if self.slack[i] > (self.lx[px] + self.ly[i] - self.match_data[px][i]):
+                        self.slack[i] = (self.lx[px] + self.ly[i] - self.match_data[px][i])
+                        pre[i] = py
+                    if(self.slack[i] < d):
+                        d = self.slack[i]
+                        yy = i
+            for i in range(self.num_right):
+                if self.visit_right[i]:
+                    self.lx[int(self.linky[i])] -= d
+                    self.ly[i] += d
+                else:
+                    self.slack[i] -= d
+            py=yy 
+            if self.linky[py] == -1:          
+                break
+
+        while(py != 0):
+            self.linky[py] = self.linky[int(pre[py])]
+            py = int(pre[py])
+    def KM(self):
+        self.lx = np.zeros(self.num_left)
+        self.ly = np.zeros(self.num_right)
+        self.linky = np.ones(self.num_right)*(-1)
+        for i in range(1,self.num_right):
+            self.visit_right = [False] * self.num_right
+            self.bfs(i)</code></pre>
+                        </div>
+                        
 					</section>
                     <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
                         <div class="message" style="opacity:0"></div>
