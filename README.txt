@@ -31,3 +31,15 @@ Credits:
 		jQuery (jquery.com)
 		Scrollex (github.com/ajlkn/jquery.scrollex)
 		Responsive Tools (github.com/ajlkn/responsive-tools)
+更新blog顺序
+1、对应文件夹下新建blog
+2、添加对应图片资源
+3、更新index.html中缩略图，category部分
+4、更新对应index中网页条目链接
+5、对上下层网页索引修复
+6、填写blog并测试
+7、github上传格式如下
+{
+    updata_classname_blognum_time
+    fix_classname_blognum_time
+}
