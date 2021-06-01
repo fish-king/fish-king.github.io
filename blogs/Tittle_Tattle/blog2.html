@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>docker gpu支持在ubuntu下配置</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+        <style>
+        .ptext{text-indent: 2em;}
+        </style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="../../index.html" class="title">主页</a>
+				<nav>
+					<ul>
+						<li><a href="blog1.html" class="active">previous</a></li>
+						<li><a href="blog3.html" class="active">next</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h2 class="major">docker gpu支持在ubuntu下配置</h2>
+                            <h3>1、nvidia驱动安装</h3>
+                            <ul>
+                                <li>https://www.nvidia.com/下载对应版本驱动</li>
+                                <li>卸载旧驱动</li>
+                                <ul>
+                                    <li>sudo apt-get purge nvidia-cuda*</li>
+                                    <li>sudo apt-get purge nvidia-*</li>
+                                </ul>
+                                <li>gcc安装</li>
+                                <ul>
+                                    <li>sudo apt install build-essential或sudo apt-get install manpages-dev</li>
+                                    <li>检测:gcc --version</li>
+                                </ul>
+                                <li>禁用nouveau驱动</li>
+                                <ul>
+                                    <li>sudo vim /etc/modprobe.d/blacklist.conf(vim不熟练也可gedit)</li>
+                                    <li>在末尾添加以下几行:</li>
+                                    <li>blacklist vga16fb</li>
+                                    <li>blacklist nouveau</li>
+                                    <li>blacklist rivafb</li>
+                                    <li>blacklist rivatv</li>
+                                    <li>blacklist nvidiafb</li>
+                                </ul>
+                                <li>关闭x-server(图形借口服务器)</li>
+                                <ul>
+                                    <li>sudo service lightdm stop或sudo /etc/init.d/lightdm stop</li>
+                                    <li>若提示unit lightdm.service not loaded，则先安装sudo apt install lightdm，后sudo service lightdm stop,如安装选择gdm,则运行sudo /etc/init.d/gdm stop</li>
+                                    <li>运行sudo /etc/init.d/lightdm stop后可能黑屏,按ctrl+alt+f2进入命令行继续安装</li>
+                                    <li>检测:$ ps aux|grep X</li>
+                                </ul>
+                                <li>安装驱动(若关闭图形界面可能中文乱码，下载驱动建议放在非中文路径)</li>
+                                <ul>
+                                    <li>sudo ./NVIDIA-Linux-x86_64-版本号.run</li>
+                                    <li>检测:nvidia-smi</li>
+                                </ul>
+                            </ul>
+                            <h3>2、docker-engine安装(https://docs.docker.com/engine/install/ubuntu/)</h3>
+                            <ul>
+                                <li>安装必备库</li>
+                                <ul>
+                                    <li>sudo apt-get update</li>
+                                    <li>sudo apt-get install apt-transport-https ca-certificates curl gnupg lsb-release</li>
+                                </ul>
+                                <li>添加docker官网GPG key</li>
+                                <ul>
+                                    <li>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg</li>
+                                </ul>
+                                <li>根据自己系统架构设置repository(cat /proc/version命令查看版本架构)</li>
+                                <ul>
+                                    <li>x86/64或amd64:&emsp;echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"|sudo tee /etc/apt/sources.list.d/docker.list>/dev/null</li>
+                                    <li>armhf:&emsp;echo "deb [arch=armhf signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"|sudo tee /etc/apt/sources.list.d/docker.list>/dev/null</li>
+                                    <li>arm64:&emsp;echo "deb [arch=arm64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"|sudo tee /etc/apt/sources.list.d/docker.list>/dev/null</li>
+                                </ul>
+                                <li>安装docker-engine</li>
+                                <ul>
+                                    <li>直接安装最新版</li>
+                                    <ul>
+                                        <li>sudo apt-get update</li>
+                                        <li>sudo apt-get install docker-ce docker-ce-cli containerd.io</li>
+                                    </ul>
+                                    <li>显示所有版本</li>
+                                    <ul>
+                                        <li>apt-cache madison docker-ce</li>
+                                    </ul>
+                                    <li>安装指定版本</li>
+                                    <ul>
+                                        <li>sudo apt-get install docker-ce=<VERSION_STRING> docker-ce-cli=<VERSION_STRING> containerd.io</li>
+                                        <li>检测:sudo docker run hello-world</li>
+                                    </ul>
+                                </ul>
+                            </ul>
+                            <h3>3、nvidia-docker安装</h3>
+                            <ul>
+                                <li>检测gpu是否可用</li>
+                                <ul>
+                                    <li>lspci | grep -i nvidia</li>
+                                </ul>
+                                <li>安装nvidia-docker</li>
+                                <ul>
+                                    <li>sudo apt-get install -y nvidia-docker2</li>
+                                    <li>sudo systemctl daemon-reload</li>
+                                    <li>sudo systemctl restart docker</li>
+                                    <li>检测:sudo docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi(若提示docker: Error response from daemon: Unknown runtime specified nvidia,可去https://hub.docker.com/r/nvidia/cuda/tags找指定版本号images运行)</li>
+                                </ul>
+                            </ul>
+                            
+						</div>
+					</section>
+                    <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
+                        <div class="message" style="opacity:0"></div>
+                        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+                    <div class="hide-button">隐藏</div>
+			</div>
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li>
+                        <li><span id="busuanzi_value_page_pv"></span> Hits</li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <!--引入css文件-->
+            <link rel="stylesheet" href="../../assets/css/live2d.css" />
+
+            <!--引入js文件-->
+            <script type="text/javascript">
+                    var message_Path = "../../assets/message.json";
+                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名，必须带斜杠
+            </script>
+            <script type="text/javascript" src="../../assets/js/live2d.js"></script>
+            <script type="text/javascript" src="../../assets/js/message.js"></script>
+            <script type="text/javascript">
+                loadlive2d("live2d", "../../assets/model/tia/model.json");
+            </script>
+	</body>
+</html>

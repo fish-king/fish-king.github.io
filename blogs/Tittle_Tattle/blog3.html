@@ -1,0 +1,142 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>docker常用命令</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+        <style>
+        .ptext{text-indent: 2em;}
+        </style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="../../index.html" class="title">主页</a>
+				<nav>
+					<ul>
+						<li><a href="blog2.html" class="active">previous</a></li>
+						<li><a href="#">next</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h2 class="major">docker常用命令</h2>
+                            <h3>显示所有容器</h3>
+                            <ul>
+                                <li>docker ps -a</li>
+                            </ul>
+                            <h3>显示所有镜像</h3>
+                            <ul>
+                                <li>docker images</li>
+                            </ul>
+                            <h3>删除镜像</h3>
+                            <ul>
+                                <li>docker rmi images_id/repository:tag</li>
+                            </ul>
+                            <h3>删除容器</h3>
+                            <ul>
+                                <li>docker rm container_id/container_name</li>
+                            </ul>
+                            <h3>下载镜像(tensorflow官方镜像源https://hub.docker.com/r/tensorflow/tensorflow/)</h3>
+                            <ul>
+                                <li>docker pull tensorflow/tensorflow:latest-gpu-jupyter(最新tensorflow-gpu+jupyter)</li>
+                            </ul>
+                            <h3>根据images创建并运行容器(相当与docker create + docker start)</h3>
+                            <ul>
+                                <li>docker run -it -v /home/aorus/docker/tf23:/home/mount/ --runtime=nvidia -p 8888:8888 --name first image_id program</li>
+                                <ul>
+                                    <li>-d:&emsp;后台运行</li>
+                                    <li>-v:&emsp;目录共享</li>
+                                    <li>-i:&emsp;交互式命令</li>
+                                    <li>-t:&emsp;分配伪终端</li>
+                                    <li>--rm:&emsp;运行后删除</li>
+                                    <li>--runtime=nvidia:&emsp;gpu支持</li>
+                                    <li>-p:&emsp;分配端口映射8888为jupyter</li>
+                                    <li>--name:&emsp;重命名容器名</li>
+                                    <li>image_id:&emsp;镜像id</li>
+                                    <li>rogram:&emsp;运行的程序，常用/bin/bash手动启动jupyter</li>
+                                </ul>
+                            </ul>
+                            <h3>docker手动启动jupyter</h3>
+                            <ul>
+                                <li>jupyter notebook/lab --allow-root --ip=0.0.0.0 --port=8888</li>
+                            </ul>
+                            <h3>docker复制文件</h3>
+                            <ul>
+                                <li>docker cp container_id(或container_name):/etc/nginx /usr/local/nginx(将左侧文件或目录复制到右侧,容器内文件须在目录前加container_id或container_name)</li>
+                            </ul>
+                            <h3>docker运行容器</h3>
+                            <ul>
+                                <li>docker start -i container_name/container_id(-i为交互式命令形式)</li>
+                                <li>docker stop container_name/container_id</li>
+                                <li>docker restart -i container_name/container_id</li>
+                            </ul>
+                            <h3>docker容器生成镜像</h3>
+                            <ul>
+                                <li>docker commit -a "jjw" -m "mytf+jupyter" container_id/container_name repository:tag</li>
+                                <ul>
+                                    <li>-a:&emsp;作者</li>
+                                    <li>-m:&emsp;说明</li>
+                                    <li>container_id:&emsp;选择的容器id或name</li>
+                                    <li>repository:&emsp;tag:仓库名+tag</li>
+                                </ul>
+                            </ul>
+                            <h3>docker上传网络仓库</h3>
+                            <ul>
+                                <li>docker push repository:tag</li>
+                            </ul>
+						</div>
+					</section>
+                    <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
+                        <div class="message" style="opacity:0"></div>
+                        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+                    <div class="hide-button">隐藏</div>
+			</div>
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li>
+                        <li><span id="busuanzi_value_page_pv"></span> Hits</li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <!--引入css文件-->
+            <link rel="stylesheet" href="../../assets/css/live2d.css" />
+
+            <!--引入js文件-->
+            <script type="text/javascript">
+                    var message_Path = "../../assets/message.json";
+                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名，必须带斜杠
+            </script>
+            <script type="text/javascript" src="../../assets/js/live2d.js"></script>
+            <script type="text/javascript" src="../../assets/js/message.js"></script>
+            <script type="text/javascript">
+                loadlive2d("live2d", "../../assets/model/tia/model.json");
+            </script>
+	</body>
+</html>
