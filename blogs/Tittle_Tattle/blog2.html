@@ -61,11 +61,11 @@
                                 <li>关闭x-server(图形借口服务器)</li>
                                 <ul>
                                     <li>sudo service lightdm stop或sudo /etc/init.d/lightdm stop</li>
-                                    <li>若提示unit lightdm.service not loaded,则先安装sudo apt install lightdm，后sudo service lightdm stop,如安装选择gdm,则运行sudo /etc/init.d/gdm stop</li>
+                                    <li>若提示unit lightdm.service not loaded,则先安装sudo apt install lightdm,后sudo service lightdm stop,如安装选择gdm,则运行sudo /etc/init.d/gdm stop</li>
                                     <li>运行sudo /etc/init.d/lightdm stop后可能黑屏,按ctrl+alt+f1进入命令行继续安装之后,sudo service lightdm start/或ctrl + alt +f7切换图形界面</li>
                                     <li>检测:$ ps aux|grep X</li>
                                 </ul>
-                                <li>安装驱动(若关闭图形界面可能中文乱码，下载驱动建议放在非中文路径)</li>
+                                <li>安装驱动(若关闭图形界面可能中文乱码,下载驱动建议放在非中文路径)</li>
                                 <ul>
                                     <li>sudo ./NVIDIA-Linux-x86_64-版本号.run</li>
                                     <li>检测:nvidia-smi</li>
@@ -153,7 +153,7 @@
             <!--引入js文件-->
             <script type="text/javascript">
                     var message_Path = "../../assets/message.json";
-                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名，必须带斜杠
+                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名,必须带斜杠
             </script>
             <script type="text/javascript" src="../../assets/js/live2d.js"></script>
             <script type="text/javascript" src="../../assets/js/message.js"></script>

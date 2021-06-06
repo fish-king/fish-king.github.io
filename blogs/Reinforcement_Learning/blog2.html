@@ -35,7 +35,7 @@
 					<section id="main" class="wrapper">
 						<div class="inner">
 							<h2 class="major">Off-policy以及PPO基础概念</h2>
-							<p class="ptext">On-policy就是模型自己先去玩游戏，根据自己获得的data来优化自己的函数，从<a href="blog1.html">上一篇blog</a>最后所提供的R'也能看出我们进行一次gradient ascent后，我们模型参数θ发生改变，R'的值也发生变化，因此只能再去sample足够的data再次gradient ascent，循环优化，而Off-policy就能纠正这个缺点。</p>
+							<p class="ptext">On-policy就是模型自己先去玩游戏,根据自己获得的data来优化自己的函数,从<a href="blog1.html">上一篇blog</a>最后所提供的R'也能看出我们进行一次gradient ascent后,我们模型参数θ发生改变,R'的值也发生变化,因此只能再去sample足够的data再次gradient ascent,循环优化,而Off-policy就能纠正这个缺点。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic1.PNG" alt="" />
@@ -43,7 +43,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">Off-policy就是用另一个agent与environment互动得到的数据来对我们的agent进行优化，这样我们九年重复利用data。</p>
+                            <p class="ptext">Off-policy就是用另一个agent与environment互动得到的数据来对我们的agent进行优化,这样我们九年重复利用data。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic2.PNG" alt="" />
@@ -59,7 +59,7 @@
                                     </span></div>
                             </div>
                             <p></p>
-                            <p class="ptext">转换前后期望相同，方差可能差距过大，在sample较少情况、p(x)和q(x)差距过大，p(x) sample的点落在左侧，期望为负，而q(x) sample在右侧，与结果相反，当然，sample数量足够多会出现在左侧的点，通过p(x)/q(x)修正会得到极大的权重，总体符合预期。</p>
+                            <p class="ptext">转换前后期望相同,方差可能差距过大,在sample较少情况、p(x)和q(x)差距过大,p(x) sample的点落在左侧,期望为负,而q(x) sample在右侧,与结果相反,当然,sample数量足够多会出现在左侧的点,通过p(x)/q(x)修正会得到极大的权重,总体符合预期。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-6"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic5.PNG" alt="" />
                                     </span></div>
@@ -67,7 +67,7 @@
                                     </span></div>
                             </div>
                             <p></p>
-                            <p class="ptext">上面的公式推演到模型中如上图，J是逆推得到的reward价值函数而非导数。</p>
+                            <p class="ptext">上面的公式推演到模型中如上图,J是逆推得到的reward价值函数而非导数。</p>
                             <h2>PPO/TRPO</h2>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
@@ -76,7 +76,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">我们不断训练过程中，我们p(x)和q(x)的差距会越来越大，这时，我们就要加入constraint,也就是PPO方法。</p>
+                            <p class="ptext">我们不断训练过程中,我们p(x)和q(x)的差距会越来越大,这时,我们就要加入constraint,也就是PPO方法。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic8.PNG" alt="" />
@@ -84,7 +84,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">PPO中KL函数并不是正则化的参数差，而是模型预测值的差值。通过调整β可以控制KL权值，差距过大，增大β使模型降低差距，差距小，则减小β降低对模型拟合的影响。TPRO将KL函数单独考虑，模型实现复杂，效果与PPO类似，故不讨论。</p>
+                            <p class="ptext">PPO中KL函数并不是正则化的参数差,而是模型预测值的差值。通过调整β可以控制KL权值,差距过大,增大β使模型降低差距,差距小,则减小β降低对模型拟合的影响。TPRO将KL函数单独考虑,模型实现复杂,效果与PPO类似,故不讨论。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog2/blog2_pic9.PNG" alt="" />
@@ -92,7 +92,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">PPO2中clip(a,1 - α,1 + α)函数，当a &lt 1 - α时,clip(a,1 - α,1 + α) = 1 - α,当a &gt 1 + α时，clip(a,1 - α,1 + α) = 1 + α，当1 - α &lt a &lt 1 + α时,clip(a,1 - α,1 + α) = a，相当于我们给价值函数J增加限制，当A为正，我们增大预测概率，但两者比值相差过大，我们取1 + α，当A为负，我们减小预测概率，但两者比值相差过大，我们取1 - α。（图中红色实线）相比于PPO实现更加简便，目前我觉得无脑用就行。</p>
+                            <p class="ptext">PPO2中clip(a,1 - α,1 + α)函数,当a &lt 1 - α时,clip(a,1 - α,1 + α) = 1 - α,当a &gt 1 + α时,clip(a,1 - α,1 + α) = 1 + α,当1 - α &lt a &lt 1 + α时,clip(a,1 - α,1 + α) = a,相当于我们给价值函数J增加限制,当A为正,我们增大预测概率,但两者比值相差过大,我们取1 + α,当A为负,我们减小预测概率,但两者比值相差过大,我们取1 - α。（图中红色实线）相比于PPO实现更加简便,目前我觉得无脑用就行。</p>
 						</div>
 					</section>
                     <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
@@ -125,7 +125,7 @@
             <!--引入js文件-->
             <script type="text/javascript">
                     var message_Path = "../../assets/message.json";
-                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名，必须带斜杠
+                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名,必须带斜杠
             </script>
             <script type="text/javascript" src="../../assets/js/live2d.js"></script>
             <script type="text/javascript" src="../../assets/js/message.js"></script>

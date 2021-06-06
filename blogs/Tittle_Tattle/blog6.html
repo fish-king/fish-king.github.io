@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>回溯算法</title>
+		<title>ubuntu卡登陆界面重复输密码</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../../assets/css/main.css" />
@@ -22,7 +22,7 @@
 				<a href="../../index.html" class="title">主页</a>
 				<nav>
 					<ul>
-						<li><a href="blog2.html" class="active">previous</a></li>
+						<li><a href="blog5.html" class="active">previous</a></li>
 						<li><a href="#">next</a></li>
 					</ul>
 				</nav>
@@ -34,28 +34,34 @@
 				<!-- Main -->
 					<section id="main" class="wrapper">
 						<div class="inner">
-							<h2 class="major">回溯算法</h2>
-							<p class="ptext">回溯算法其实就是我们常说的 DFS 算法,本质上就是一种暴力穷举算法。</p>
-                            <p></p>
-                            <p class="ptext">解决一个回溯问题,实际上就是一个决策树的遍历过程。代码方面,回溯算法的框架：</p>
-                            <p></p>
-                            <pre><code>result = []
-def backtrack(路径, 选择列表):
-    if 满足结束条件:
-        result.add(路径)
-        return
-    
-    for 选择 in 选择列表:
-        做选择
-        backtrack(路径, 选择列表)
-        撤销选择</code></pre>
-                            <p></p>
-                            <p class="ptext">其核心就是 for 循环里面的递归,在递归调用之前「做选择」,在递归调用之后「撤销选择」。回溯算法的一个特点,不像动态规划存在重叠子问题可以优化,回溯算法就是纯暴力穷举,复杂度一般都很高。当然回溯算法也可以通过类似dp的备忘录进行剪枝,缩短计算复杂度,但复杂的仍很高,因此尽量在求全解时不使用回溯算法,而在求单解时使用。</p>
-                            <p></p>
-                            <p class="ptext">某种程度上说,动态规划的暴力求解阶段就是回溯算法。只是有的问题具有重叠子问题性质,可以用 dp table 或者备忘录优化,将递归树大幅剪枝,这就变成了动态规划。而对于没有重叠子问题,也就是回溯算法问题了,复杂度非常高是不可避免的。</p>
-                            
-                        </div>
-                        
+							<h2 class="major">ubuntu卡登陆界面重复输密码</h2>
+                            <p>在训练过程中cache生成过大占满磁盘(tensorfow cache约为原图大小40倍),出现此bug,记录下该bug可能出现的原因以及解决方法,图型界面切换快捷键如下:</p>
+                            <pre><code>ctrl + alt + f1 命令登陆
+ctrl + alt + f7 返回图形界面</code></pre>
+                            <h3>1、主目录下.Xauthority所有者变为root,其他用户登陆无法读取.Xauthority文件</h3>
+                            <ul>
+                                <li>ls -a</li>
+                                <li>sudo chown name:name .Xauthority</li>
+                                <li>检验:ls .Xauthority -l</li>
+                            </ul>
+                            <h3>2、误删/tmp目录,系统自动重建tmp目录,其他用户无权写入</h3>
+                            <ul>
+                                <li>cd ..&emsp;&emsp;#返回home目录</li>
+                                <li>cd ..&emsp;&emsp;#返回root目录</li>
+                                <li>sudo chmod 777 /tmp&emsp;&emsp;#确保tmp目录权限为777</li>
+                            </ul>
+                            <h3>3、home目录到达磁盘上限(作者训练模型cache过大,拉满磁盘)</h3>
+                            <ul>
+                                <li>rm -rf 目录&emsp;&emsp;#清理空间即可</li>
+                            </ul>
+                            <h3>4、登陆图形界面配置信息错误(清理图形配置文件,重新生成)</h3>
+                            <ul>
+                                <li>sudo –s</li>
+                                <li>rm –rf ~/.gconf</li>
+                                <li>rm -rf ~/gconfd</li>
+                                <li>sudo shutdown –r now</li>
+                            </ul>
+						</div>
 					</section>
                     <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
                         <div class="message" style="opacity:0"></div>

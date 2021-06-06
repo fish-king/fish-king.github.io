@@ -35,7 +35,7 @@
 					<section id="main" class="wrapper">
 						<div class="inner">
 							<h2 class="major">Critic以及Q-learning方法</h2>
-							<p class="ptext">之前我们模型训练都是actor方法，我们通过输入observation，输出为action，相当于训练一个玩游戏的actor,而critic方法是对于我们当前状态预期得分进行评估，输入为observation，输出为state value。两种方法都是强化学习即常用方法。</p>
+							<p class="ptext">之前我们模型训练都是actor方法,我们通过输入observation,输出为action,相当于训练一个玩游戏的actor,而critic方法是对于我们当前状态预期得分进行评估,输入为observation,输出为state value。两种方法都是强化学习即常用方法。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic1.PNG" alt="" />
@@ -43,7 +43,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">同样以星战游戏举例，当剩余敌机较多，我们飞机防护罩还在情况，模型评估当前的状况好，state value值很大，当剩余敌机较少，我们飞机防护罩消失，则认为我们情况危急，state value值小。我们训练的V^π(s)不止与环境相关，也与actor相关，如果我们actor足够优秀，同样情况下的预测state value也会高，如果actor训练不够，我们对同样情况下的预测state value也会降低。</p>
+                            <p class="ptext">同样以星战游戏举例,当剩余敌机较多,我们飞机防护罩还在情况,模型评估当前的状况好,state value值很大,当剩余敌机较少,我们飞机防护罩消失,则认为我们情况危急,state value值小。我们训练的V^π(s)不止与环境相关,也与actor相关,如果我们actor足够优秀,同样情况下的预测state value也会高,如果actor训练不够,我们对同样情况下的预测state value也会降低。</p>
                             <h3>常见两种critic训练V^π(s)方法</h3>
                             <ul>
                                 <li>Monte-Corlo(MC) based approach</li>
@@ -56,7 +56,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">MC方法我们我们的critic先观察actor随机运行多次的数据，计算每个状态累计reward和作为output label，变为一个回归问题。</p>
+                            <p class="ptext">MC方法我们我们的critic先观察actor随机运行多次的数据,计算每个状态累计reward和作为output label,变为一个回归问题。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic3.PNG" alt="" />
@@ -64,7 +64,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">TD方法也是回归的方法，在训练过程中采用两次相邻state差值刚好等于该次action的reward来对模型进行训练。</p>
+                            <p class="ptext">TD方法也是回归的方法,在训练过程中采用两次相邻state差值刚好等于该次action的reward来对模型进行训练。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic4.PNG" alt="" />
@@ -72,7 +72,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">两种方法的差别，对于MC方法，每次训练累计的reward都可能把不同，variance较大，并且每次训练都要求到游戏结束才能获得数据，而TD训练则可以避免这个问题，当然，TD训练过程中，V^π(s)不一定准确的。</p>
+                            <p class="ptext">两种方法的差别,对于MC方法,每次训练累计的reward都可能把不同,variance较大,并且每次训练都要求到游戏结束才能获得数据,而TD训练则可以避免这个问题,当然,TD训练过程中,V^π(s)不一定准确的。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic5.PNG" alt="" />
@@ -80,7 +80,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">另一种Critic方法，Q^π(s,a)与V^π(s)区别在于Q中下一步a是固定的，V中下一步则是按a的概率有不同选择。Q按上图有两种架构，一种state,action作为input，输出reward，第二种输入仅state,输出n种reward，对应各个action。</p>
+                            <p class="ptext">另一种Critic方法,Q^π(s,a)与V^π(s)区别在于Q中下一步a是固定的,V中下一步则是按a的概率有不同选择。Q按上图有两种架构,一种state,action作为input,输出reward,第二种输入仅state,输出n种reward,对应各个action。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-6"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic6.PNG" alt="" />
                                     </span></div>
@@ -88,7 +88,7 @@
                                     </span></div>
                             </div>
                             <p></p>
-                            <p class="ptext">Q-learning方法是对于π的一组episodes，我们对他拟合出Q^π(s,a) function，通过这个function我们能找到更好的π'带入得到新的episodes，继续优化Q^π(s,a)，循环过程。证明在右侧。</p>
+                            <p class="ptext">Q-learning方法是对于π的一组episodes,我们对他拟合出Q^π(s,a) function,通过这个function我们能找到更好的π'带入得到新的episodes,继续优化Q^π(s,a),循环过程。证明在右侧。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic8.PNG" alt="" />
@@ -96,7 +96,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">训练类似TD训练方法，但两个Q相同的话我们训练过程中Q改变，output值会不断变化，因此，我们固定output的Q function，进行N次Regression后用心的替换旧的，继续训练。</p>
+                            <p class="ptext">训练类似TD训练方法,但两个Q相同的话我们训练过程中Q改变,output值会不断变化,因此,我们固定output的Q function,进行N次Regression后用心的替换旧的,继续训练。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic9.PNG" alt="" />
@@ -104,7 +104,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">在训练中，如果某些情况未sample到，那我们对该情况的value估值为初始值，以后的action也不会采用其他值，因此我们需要模型对environment做出exploration，这样sample样例才多样性。有两种方法，Epsilon Greedy和Boltzmann Exploration，图上有详解。</p>
+                            <p class="ptext">在训练中,如果某些情况未sample到,那我们对该情况的value估值为初始值,以后的action也不会采用其他值,因此我们需要模型对environment做出exploration,这样sample样例才多样性。有两种方法,Epsilon Greedy和Boltzmann Exploration,图上有详解。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic10.PNG" alt="" />
@@ -112,7 +112,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">训练中，我们采用一个buffer存储数据，buffer中不断增加新数据，满了则删除旧数据。这样有两点优点，其一数据重复使用，这样类似off-policy提升效率，其二提升数据多样性，使模型拟合更好。</p>
+                            <p class="ptext">训练中,我们采用一个buffer存储数据,buffer中不断增加新数据,满了则删除旧数据。这样有两点优点,其一数据重复使用,这样类似off-policy提升效率,其二提升数据多样性,使模型拟合更好。</p>
                             <div class="row gtr-uniform">
                                     <div class="col-4"></div>
                                     <div class="col-4"><span class="image fit"><img src="../../images/RLImage/blog3/blog3_pic11.PNG" alt="" />
@@ -120,7 +120,7 @@
                                     <div class="col-4"></div>
                             </div>
                             <p></p>
-                            <p class="ptext">Q-learning模型总结，伪代码流程。</p>
+                            <p class="ptext">Q-learning模型总结,伪代码流程。</p>
 						</div>
 					</section>
                     <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
@@ -153,7 +153,7 @@
             <!--引入js文件-->
             <script type="text/javascript">
                     var message_Path = "../../assets/message.json";
-                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名，必须带斜杠
+                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名,必须带斜杠
             </script>
             <script type="text/javascript" src="../../assets/js/live2d.js"></script>
             <script type="text/javascript" src="../../assets/js/message.js"></script>
