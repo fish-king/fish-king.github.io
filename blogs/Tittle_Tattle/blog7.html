@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>ubuntu卡登陆界面重复输密码</title>
+		<title>向量内积与向量外积</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../../assets/css/main.css" />
@@ -22,8 +22,8 @@
 				<a href="../../index.html" class="title">主页</a>
 				<nav>
 					<ul>
-						<li><a href="blog5.html" class="active">previous</a></li>
-						<li><a href="blog7.html" class="active">next</a></li>
+						<li><a href="blog6.html" class="active">previous</a></li>
+						<li><a href="#">next</a></li>
 					</ul>
 				</nav>
 			</header>
@@ -34,33 +34,24 @@
 				<!-- Main -->
 					<section id="main" class="wrapper">
 						<div class="inner">
-							<h2 class="major">ubuntu卡登陆界面重复输密码</h2>
-                            <p>在训练过程中cache生成过大占满磁盘(tensorfow cache约为原图大小40倍),出现此bug,记录下该bug可能出现的原因以及解决方法,图型界面切换快捷键如下:</p>
-                            <pre><code>ctrl + alt + f1 命令登陆
-ctrl + alt + f7 返回图形界面</code></pre>
-                            <h3>1、主目录下.Xauthority所有者变为root,其他用户登陆无法读取.Xauthority文件</h3>
-                            <ul>
-                                <li>ls -a</li>
-                                <li>sudo chown name:name .Xauthority</li>
-                                <li>检验:ls .Xauthority -l</li>
-                            </ul>
-                            <h3>2、误删/tmp目录,系统自动重建tmp目录,其他用户无权写入</h3>
-                            <ul>
-                                <li>cd ..&emsp;&emsp;#返回home目录</li>
-                                <li>cd ..&emsp;&emsp;#返回root目录</li>
-                                <li>sudo chmod 777 /tmp&emsp;&emsp;#确保tmp目录权限为777</li>
-                            </ul>
-                            <h3>3、home目录到达磁盘上限(作者训练模型cache过大,拉满磁盘)</h3>
-                            <ul>
-                                <li>rm -rf 目录&emsp;&emsp;#清理空间即可</li>
-                            </ul>
-                            <h3>4、登陆图形界面配置信息错误(清理图形配置文件,重新生成)</h3>
-                            <ul>
-                                <li>sudo –s</li>
-                                <li>rm –rf ~/.gconf</li>
-                                <li>rm -rf ~/gconfd</li>
-                                <li>sudo shutdown –r now</li>
-                            </ul>
+							<h2 class="major">向量内积与向量外积</h2>
+                            <pre><p>向量外积与向量内积(a = [x1,y1,z1], b = [x2,y2,z2]):
+向量内积(点乘):
+	公式:c = x1*x2 + y1*y2 + z1*z2 = |a|*|b|*cos(θ)
+	几何意义:a或b在对方方向上投影大小
+	应用:
+		求向量夹角大小 θ = arccos(a·b/(|a|*|b|)) infered from 余弦定理
+		判断向量方向关系: a·b > 0 --> a、b间为锐角 a·b = 0 --> a、b正交 a·b < 0 --> a、b间为钝角
+向量外积(叉乘):
+	公式:|a×b| = |a|*|b|*sin(θ) 注:外积值为矢量，方向垂直与a、b所组成平面，右手顺时针螺旋判断(向量矩阵乘法如下图:)
+    <div class="col-10"><span class="image fit"><img src="../../images/TTImage/blog7/blog7_pic1.PNG" alt="" />
+                                    </span></div>
+	几何意义:a×b = (y1z2 - y2z1,-(x1z3 - x2z1),x1y2 - x2y1)
+	应用:
+		|a×b|数值上等于a、b构成平行四边形面积
+		生成第三个垂直与a、b平面的向量，构建坐标系
+                        </p></pre>
+        
 						</div>
 					</section>
                     <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
