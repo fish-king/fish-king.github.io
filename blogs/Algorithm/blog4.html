@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>回溯算法</title>
+		<title>PNPoly算法</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../../assets/css/main.css" />
@@ -22,8 +22,8 @@
 				<a href="../../index.html" class="title">主页</a>
 				<nav>
 					<ul>
-						<li><a href="blog2.html" class="active">previous</a></li>
-						<li><a href="blog4.html" class="active">next</a></li>
+						<li><a href="blog3.html" class="active">previous</a></li>
+						<li><a href="#">next</a></li>
 					</ul>
 				</nav>
 			</header>
@@ -34,28 +34,21 @@
 				<!-- Main -->
 					<section id="main" class="wrapper">
 						<div class="inner">
-							<h2 class="major">回溯算法</h2>
-							<p class="ptext">回溯算法其实就是我们常说的 DFS 算法,本质上就是一种暴力穷举算法。</p>
+							<h2 class="major">PNPoly算法</h2>
+							<p class="ptext">PNPoly算法目的是找出点与多边型的关系，分为点在多边型内、点在多边型外以及点在多边型上</p>
+                            <p class="ptext">基本原理:从点引出一条水平射线，判断与图型交点个数，若交点为偶数，在图型外部，反之在内部</p>
                             <p></p>
-                            <p class="ptext">解决一个回溯问题,实际上就是一个决策树的遍历过程。代码方面,回溯算法的框架：</p>
-                            <p></p>
-                            <pre><code>result = []
-def backtrack(路径, 选择列表):
-    if 满足结束条件:
-        result.add(路径)
-        return
-    
-    for 选择 in 选择列表:
-        做选择
-        backtrack(路径, 选择列表)
-        撤销选择</code></pre>
-                            <p></p>
-                            <p class="ptext">其核心就是 for 循环里面的递归,在递归调用之前「做选择」,在递归调用之后「撤销选择」。回溯算法的一个特点,不像动态规划存在重叠子问题可以优化,回溯算法就是纯暴力穷举,复杂度一般都很高。当然回溯算法也可以通过类似dp的备忘录进行剪枝,缩短计算复杂度,但复杂的仍很高,因此尽量在求全解时不使用回溯算法,而在求单解时使用。</p>
-                            <p></p>
-                            <p class="ptext">某种程度上说,动态规划的暴力求解阶段就是回溯算法。只是有的问题具有重叠子问题性质,可以用 dp table 或者备忘录优化,将递归树大幅剪枝,这就变成了动态规划。而对于没有重叠子问题,也就是回溯算法问题了,复杂度非常高是不可避免的。</p>
-                            
+                            <pre><code>int pnpoly(int nvert, float *vertx, float *verty, float testx, float testy)
+{
+	int i, j, c = 0;
+	for (i = 0, j = nvert-1; i < nvert; j = i++) {
+		if ( ((verty[i]>testy) != (verty[j]>testy)) && //排除不相干的边
+		(testx < (vertx[j]-vertx[i]) * (testy-verty[i]) / (verty[j]-verty[i])+vertx[i])) 
+			c = !c;
+	}
+	return c;
+}</code></pre>
                         </div>
-                        
 					</section>
                     <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
                         <div class="message" style="opacity:0"></div>
