@@ -6,7 +6,7 @@
 -->
 <html>
 	<head>
-		<title>PNPoly算法</title>
+		<title>计算多边形面积</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="../../assets/css/main.css" />
@@ -22,8 +22,8 @@
 				<a href="../../index.html" class="title">主页</a>
 				<nav>
 					<ul>
-						<li><a href="blog3.html" class="active">previous</a></li>
-						<li><a href="blog5.html" class="active">next</a></li>
+						<li><a href="blog4.html" class="active">previous</a></li>
+						<li><a href="blog6.html" class="active">next</a></li>
 					</ul>
 				</nav>
 			</header>
@@ -34,26 +34,21 @@
 				<!-- Main -->
 					<section id="main" class="wrapper">
 						<div class="inner">
-							<h2 class="major">PNPoly算法</h2>
-							<p class="ptext">PNPoly算法目的是找出点与多边型的关系，分为点在多边型内、点在多边型外以及点在多边型上</p>
-                            <p class="ptext">基本原理:从点引出一条水平射线，判断与图型交点个数，若交点为偶数，在图型外部，反之在内部</p>
-                            <p></p>
-                            <pre><code>
-struct Point{
-    Point(int a,int b):x(a),y(b){}
+							<h2 class="major">计算多边形面积</h2>
+							<p class="ptext">计算多边形面积可以使用<a href="../Tittle_Tattle/blog7.html">向量外积</a>来计算</p>
+                            <pre><code>struct Point{
+    Point(int a,int b):x(a),y(b) {}
     double x,y;
 };
-int pnpoly(int nvert,vector<Point > &p,Point test)
+double calc_area(vector<Point > &p)
 {
-    int c = 0;
-    for(int i = 0,j = nvert - 1;i < nvert; j=i++) //所有点顺时针首尾相连
+    double area = 0;
+    int len = p.size();
+    for(int i = 0;i < len; ++i)
     {
-        if((p[i].y > test.y) != (p[j].y > test.y)) continue; //剔除从(x,y)射出的水平直线不相交的边
-        double crossx = (p[j].x-p[i].x) * (test.y-p[i].y) / (p[j].y-p[i].y) + p[i].x; //计算与(x,y)射出水平射线相交的边的交点的x
-        if(crossx == test.x) return 2; //如果交点为测试点，则点在边上
-        else if(test.x < crossx) c = !c;//计算交点奇偶个数，奇在内，偶在外
+        area += p[i].x * p[(i+1) % len].y - p[i].y * p[(i+1) % len].x; //向量外积计算面积
     }
-    return c;
+    return area/2;
 }
 int main()
 {
@@ -67,8 +62,7 @@ int main()
         cin >> y;
         p.push_back(Point(x,y));
     }
-    Point test(1,1);
-    cout << pnpoly(n,p,test) << endl;
+    cout << calc_area(p);
     return 0;
 }</code></pre>
                         </div>

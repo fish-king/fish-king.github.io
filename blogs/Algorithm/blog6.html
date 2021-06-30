@@ -1,0 +1,362 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>多线程python基础</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+        <style>
+        .ptext{text-indent: 2em;}
+        </style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="../../index.html" class="title">主页</a>
+				<nav>
+					<ul>
+						<li><a href="blog5.html" class="active">previous</a></li>
+						<li><a href="#">next</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h2 class="major">多线程python基础</h2>
+							<p class="ptext">代码及部分输出如下:</p>
+                            <pre><code>import threading
+import queue
+import time
+
+
+class man(threading.Thread):
+    def __init__(self ,threadID ,name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.count = 0
+    def run(self):
+        for i in range(10):
+            self.count += 1
+            print(self.name + " is running " + str(self.count) +"times!!!")
+th1 = man(1 ,"pee")
+th2 = man(2 ,"drink")
+th1.setDaemon(True) #设置守护线程后，主线程结束，回收守护线程
+th2.setDaemon(True) #若未设置守护线程，当主程序运行结束，还会等待用户线程加入
+th1.start()
+th2.start()
+th1.join() #主线程等待子线程结束
+th2.join() #为了让守护线程执行结束之后，主线程再结束，我们可以使用join方法，让主线程等待子线程执行
+print("main process over!!!")
+# pee is running 1times!!!
+# pee is running 2times!!!
+# pee is running 3times!!!drink is running 1times!!!
+# pee is running 4times!!!
+# pee is running 5times!!!
+# pee is running 6times!!!
+
+# drink is running 2times!!!
+# drink is running 3times!!!
+# drink is running 4times!!!
+# drink is running 5times!!!
+# drink is running 6times!!!
+# drink is running 7times!!!
+# drink is running 8times!!!
+# drink is running 9times!!!
+# drink is running 10times!!!
+# pee is running 7times!!!
+# pee is running 8times!!!
+# pee is running 9times!!!
+# pee is running 10times!!!
+# main process over!!!
+
+
+#多线程共享全局变量
+#线程时进程的执行单元，进程时系统分配资源的最小执行单位，所以在同一个进程中的多线程是共享资源的
+stars = 20
+class countingstar(threading.Thread):
+    def __init__(self ,threadID ,name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.count = 0  
+    def run(self):
+        global stars #类共享全局变量
+        while(stars > 0):
+            self.count += 1
+            stars -= 1
+            print(self.name + " counts NO." + str(stars) +" stars!!!")
+th3 = countingstar(3 ,"jjw")
+th4 = countingstar(4 ,"ld")
+th3.setDaemon(True)
+th4.setDaemon(True)
+th3.start()
+th4.start()
+# jjw counts NO.19 stars!!!
+# jjw counts NO.18 stars!!!
+# jjw counts NO.17 stars!!!
+# jjw counts NO.16 stars!!!
+# jjw counts NO.15 stars!!!ld counts NO.14 stars!!!
+# ld counts NO.13 stars!!!
+# ld counts NO.12 stars!!!
+# jjw counts NO.11 stars!!!
+# jjw counts NO.10 stars!!!
+# jjw counts NO.9 stars!!!
+# jjw counts NO.8 stars!!!
+# jjw counts NO.7 stars!!!
+# jjw counts NO.6 stars!!!
+# jjw counts NO.5 stars!!!
+# jjw counts NO.4 stars!!!
+
+# jjw counts NO.3 stars!!!
+# jjw counts NO.2 stars!!!
+# jjw counts NO.1 stars!!!
+# jjw counts NO.0 stars!!!
+
+
+#线程锁
+#互斥锁(Lock) 多进程同时只有一个进程对互斥区操作
+class fileprocessor(threading.Thread):
+    def __init__(self ,threadID ,name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+    def run(self):
+        while (True):
+            #global lock
+            lock.acquire()
+            print(self.name + " is writing !!!")
+            time.sleep(0.5)
+            lock.release()
+            time.sleep(0.5)
+lock = threading.Lock() #可全局调用，无需global声明
+th5 = fileprocessor(5 ,"writer1")
+th6 = fileprocessor(6 ,"writer2")
+th5.setDaemon(True)
+th6.setDaemon(True)
+th5.start()
+th6.start()
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# ......
+
+
+#递归锁(RLock) 可嵌套上锁,内置计数器统计锁个数
+class fileprocessor(threading.Thread):
+    def __init__(self ,threadID ,name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+    def run(self):
+        while (True):
+            #global lock
+            lock.acquire()
+            print(self.name + " is writing !!!")
+            time.sleep(0.5)
+            lock.release()
+            time.sleep(0.5)
+lock = threading.RLock() #可全局调用，无需global声明
+th7 = fileprocessor(5 ,"writer1")
+th8 = fileprocessor(6 ,"writer2")
+th7.setDaemon(True)
+th8.setDaemon(True)
+th7.start()
+th8.start()
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# writer1 is writing !!!
+# writer2 is writing !!!
+# ......
+
+
+#信号量(BoundedSemaphore类) Semaphore是同时允许一定数量的线程更改数据
+class car(threading.Thread):
+    def __init__(self ,threadID ,name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+    def run(self):
+        #global lock
+        semaphore.acquire()
+        print(self.name + " is parking for 5 seconds!!!")
+        time.sleep(5)
+        semaphore.release()
+semaphore = threading.BoundedSemaphore(3) #可全局调用，无需global声明
+for i in range(10):
+    t = car(i+1,"car" + str(i))
+    t.start()
+    print("Thread " + str(i+1) + "has created!!!")
+# car0 is parking for 5 seconds!!!
+# Thread 1has created!!!
+# car1 is parking for 5 seconds!!!
+# Thread 2has created!!!
+# car2 is parking for 5 seconds!!!Thread 3has created!!!
+# Thread 4has created!!!
+
+# Thread 5has created!!!
+# Thread 6has created!!!
+# Thread 7has created!!!
+# Thread 8has created!!!
+# Thread 9has created!!!
+# Thread 10has created!!!
+# car4 is parking for 5 seconds!!!
+# car3 is parking for 5 seconds!!!
+# car5 is parking for 5 seconds!!!
+# car6 is parking for 5 seconds!!!
+# car7 is parking for 5 seconds!!!
+# car8 is parking for 5 seconds!!!
+# car9 is parking for 5 seconds!!!
+
+
+#互斥锁(Lock)实现线程同步
+count = 0
+class cooker1(threading.Thread):
+    def __init__(self ,threadID ,name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+    def run(self):
+        global count
+        while (True):
+            lockA.acquire()
+            count += 1
+            print(self.name + " is adding salt!!!" + "    " + str(count))
+            lockB.release()
+class cooker2(threading.Thread):
+    def __init__(self ,threadID ,name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+    def run(self):
+        global count
+        while (count < 20):
+            #global lock
+            lockB.acquire()
+            count += 1
+            print(self.name + " is adding water!!!" + "   " + str(count))
+            lockA.release()
+lockA = threading.Lock()
+lockB = threading.Lock()
+lockB.acquire()
+thA = cooker1(1 ,"cooker1")
+thB = cooker2(2 ,"cooker2")
+thA.setDaemon(True)
+thB.setDaemon(True)
+thA.start()
+thB.start()
+# cooker1 is adding salt!!!    1
+# cooker2 is adding water!!!   2
+# cooker1 is adding salt!!!    3
+# cooker2 is adding water!!!   4
+# cooker1 is adding salt!!!    5
+# cooker2 is adding water!!!   6
+# cooker1 is adding salt!!!    7
+# cooker2 is adding water!!!   8
+# cooker1 is adding salt!!!    9
+# cooker2 is adding water!!!   10
+# cooker1 is adding salt!!!    11
+# cooker2 is adding water!!!   12
+# cooker1 is adding salt!!!    13
+# cooker2 is adding water!!!   14
+# cooker1 is adding salt!!!    15
+# cooker2 is adding water!!!   16
+# cooker1 is adding salt!!!    17
+# cooker2 is adding water!!!   18
+# cooker1 is adding salt!!!    19
+# cooker2 is adding water!!!   20
+# cooker1 is adding salt!!!    21</code></pre>
+                        </div>
+					</section>
+                    <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
+                        <div class="message" style="opacity:0"></div>
+                        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+                    <div class="hide-button">隐藏</div>
+			</div>
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li>
+                        <li><span id="busuanzi_value_page_pv"></span> Hits</li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <!--引入css文件-->
+            <link rel="stylesheet" href="../../assets/css/live2d.css" />
+
+            <!--引入js文件-->
+            <script type="text/javascript">
+                    var message_Path = "../../assets/message.json";
+                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名,必须带斜杠
+            </script>
+            <script type="text/javascript" src="../../assets/js/live2d.js"></script>
+            <script type="text/javascript" src="../../assets/js/message.js"></script>
+            <script type="text/javascript">
+                loadlive2d("live2d", "../../assets/model/tia/model.json");
+            </script>
+	</body>
+</html>
