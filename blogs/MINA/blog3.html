@@ -1,0 +1,308 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>tensorflow2 predict速度比较</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="../../assets/css/noscript.css" /></noscript>
+        <style>
+        .ptext{text-indent: 2em;}
+        </style>
+	</head>
+	<body class="is-preload">
+
+		<!-- Header -->
+			<header id="header">
+				<a href="../../index.html" class="title">主页</a>
+				<nav>
+					<ul>
+						<li><a href="blog2.html" class="active">previous</a></li>
+						<li><a href="#">next</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h2 class="major">tensorflow2 predict速度比较</h2>
+                            <p>单张推演opencv版本、单张推演tensorflow版本以及多张推演tensorflow多线程代码如下:</p>
+                            <pre><code>import tensorflow as tf
+from tensorflow.keras.models import Model
+from tensorflow.keras.models import load_model
+import os
+import numpy as np
+import cv2 as cv
+import csv
+import time
+import threading
+import math
+import pandas as pd
+
+#environment
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+gpus = tf.config.list_physical_devices('GPU')
+gpu_num = len(gpus)
+devices = ["/gpu:" + str(i) for i in range(gpu_num)]
+print(devices)
+
+#model load
+file_name = "en0vvc_src_0.9805_model.h5"
+model_path = "models/" + file_name
+devices = ["/gpu:" + str(i) for i in range(gpu_num)]
+mirrored_strategy = tf.distribute.MirroredStrategy(devices=devices)
+with mirrored_strategy.scope():
+    model = load_model(model_path)
+model.summary()
+
+#parameters
+thresh = 0.5
+type_num = 2
+normalization = False
+rgb2bgr = True
+input_height = 512
+input_width = 640
+images_dir = "../datasets/vvc_src/train/1"
+batch_size = 32
+model_type = "vvc_"
+
+
+# #opencv version
+# img_names = os.listdir(images_dir)
+# count = 0
+# label_count = 0
+# total_num = len(img_names)
+# out = open("opencvtest.csv", "w", newline = "")
+# csv_writer = csv.writer(out, dialect = "excel")
+
+# row = ["img_name"]
+# for i in range(type_num):
+#     row.append(model_type + str(i))
+# csv_writer.writerow(row)
+
+# start = time.time()
+# for img_name in img_names:
+#     img = cv.imread(images_dir + "/" + img_name, -1)
+#     if rgb2bgr:
+#         img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
+#     img = cv.resize(img, (input_width, input_height))
+#     img = np.float32(img)
+#     if normalization:
+#         img = img-img.mean()
+#         img = img/255.0
+#     img = np.expand_dims(img, axis=0)
+#     result = model.predict(img)
+#     if(result[0][1] > thresh):
+#         label_count += 1
+#     count += 1
+#     if(count % 100 == 0):
+#         print("total " + str(count) + " images predicted!!!")
+#     row = []
+#     row.append(img_name)
+#     for i in range(type_num):
+#         row.append(result[0][i])
+#     csv_writer.writerow(row)
+
+# end = time.time()
+# out.close()
+# print("total " + str(total_num) + " images in " + str(end - start) + "s , "+ str(label_count) + " detected!!!")
+# #total 5320 images in 406.15343403816223s , 5285 detected!!!
+
+
+# #tensorflow version
+# img_names = os.listdir(images_dir)
+# count = 0
+# label_count = 0
+# total_num = len(img_names)
+
+# out = open("tftest.csv", "w", newline = "")
+# csv_writer = csv.writer(out, dialect = "excel")
+
+# row = ["img_name"]
+# for i in range(type_num):
+#     row.append(model_type + str(i))
+# csv_writer.writerow(row)
+
+# start = time.time()
+# for img_name in img_names:
+#     img = tf.io.read_file(images_dir + "/" + img_name)
+#     img = tf.image.decode_jpeg(img, channels=3)
+#     img = tf.image.resize(img, [input_height, input_width])
+#     if normalization:
+#         img -= tf.reduce_mean(img)
+#         img /= 255.0  # normalize to [0,1] range
+#     img = tf.expand_dims(img, 0)
+    
+#     result = model.predict(img)
+#     if(result[0][1] > thresh):
+#         label_count += 1
+#     count += 1
+#     if(count % 100 == 0):
+#         print("total " + str(count) + " images predicted!!!")
+#     row = []
+#     row.append(img_name)
+#     for i in range(type_num):
+#         row.append(result[0][i])
+#     csv_writer.writerow(row)
+
+# end = time.time()
+# out.close()
+# print("total " + str(total_num) + " images in " + str(end - start) + "s , "+ str(label_count) + " detected!!!")
+# #total 5320 images in 384.6226522922516s , 5294 detected!!!
+
+#muti-thread version
+imgs = [] #data_generator在此生成数据,model_predict复制此数据predict
+label_count = 0
+
+out = open("test.csv", "w", newline = "") #csv open
+csv_writer = csv.writer(out, dialect = "excel")
+row = []
+for i in range(type_num):
+    row.append(model_type + str(i))
+csv_writer.writerow(row)
+
+class data_generator(threading.Thread):
+    def __init__(self ,threadID ,input_height ,input_width ,batch_size, images_dir, normalization):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.input_height = input_height
+        self.input_width = input_width
+        self.batch_size = batch_size
+        self.count = 0
+        self.images_dir = images_dir
+        self.normalization = normalization
+    def readimg(self, img_name):
+        img = tf.io.read_file(self.images_dir + "/" + img_name)
+        img = tf.image.decode_jpeg(img, channels=3)
+        img = tf.image.resize(img, [input_height, input_width])
+        if self.normalization:
+            img -= tf.reduce_mean(img)
+            img /= 255.0  # normalize to [-1,1] range
+        img = tf.expand_dims(img, 0)
+        return img
+    def run(self):
+        global imgs #全局变量
+        img_names = os.listdir(images_dir)
+        total_num = len(img_names)
+        for img_name,i in zip(img_names,range(total_num)):
+            if(self.count == batch_size):
+                dataRD.release()
+                modelPD.acquire()
+                self.count = 0
+            if(self.count == 0):
+                self.count += 1
+                imgs = self.readimg(img_name)
+            else:
+                img = self.readimg(img_name)
+                imgs = tf.concat([imgs,img],axis = 0)
+                self.count += 1
+
+        dataRD.release() #最后一个batchsize单独释放(无论是否==batch_size)
+        modelPD.acquire()
+        self.count = 0
+    
+class model_predict(threading.Thread):
+    def __init__(self, threadID, model, batch, thresh):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.model = model
+        self.batch = batch
+        self.count = 0
+        self.thresh = thresh
+        self.imgs_pd = []
+    def run(self):
+        global imgs, label_count, csv_writer, batch_size #全局变量
+        for i in range(batch):
+            dataRD.acquire()
+            self.imgs_pd = imgs
+            modelPD.release() #复制后即可释放锁，无需等待
+            result = self.model.predict(imgs)
+            for j in range(len(result)):
+                if(result[j][1] > self.thresh):
+                    label_count += 1
+                row = []
+                for item in result[j]:
+                    row.append(item)
+                csv_writer.writerow(row)
+            self.count += len(result)
+            print("total " + str(self.count) + " images predicted!!!")
+
+img_names = os.listdir(images_dir)
+batch = math.ceil(len(img_names) / batch_size)
+th1 = data_generator(1, input_height, input_width, batch_size, images_dir, normalization)
+th2 = model_predict(2, model, batch, thresh)
+
+start = time.time()
+modelPD = threading.Lock()
+dataRD = threading.Lock()
+dataRD.acquire()
+modelPD.acquire()
+th1.setDaemon(True)
+th2.setDaemon(True)
+th1.start()
+th2.start()
+th1.join()
+th2.join()
+
+out.close() #csv close
+
+df = pd.read_csv('test.csv') #添加ImageName
+df.insert(0, "img_name", img_names)
+df.to_csv('test.csv',index = None)
+
+end = time.time()
+
+print("total " + str(len(img_names)) + " images in " + str(end - start) + "s , "+ str(label_count) + " detected!!!")
+#total 5320 images in 78.78363728523254s , 5294 detected!!!</code></pre>
+                            
+						</div>
+					</section>
+                    <div id="landlord" style="position: fixed; z-index: 10; left: 80.8%; bottom: 0">
+                        <div class="message" style="opacity:0"></div>
+                        <canvas id="live2d" width="280" height="250" class="live2d"></canvas>
+                    <div class="hide-button">隐藏</div>
+			</div>
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li>
+                        <li><span id="busuanzi_value_page_pv"></span> Hits</li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="../../assets/js/jquery.min.js"></script>
+			<script src="../../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../../assets/js/browser.min.js"></script>
+			<script src="../../assets/js/breakpoints.min.js"></script>
+			<script src="../../assets/js/util.js"></script>
+			<script src="../../assets/js/main.js"></script>
+            <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+            <!--引入css文件-->
+            <link rel="stylesheet" href="../../assets/css/live2d.css" />
+
+            <!--引入js文件-->
+            <script type="text/javascript">
+                    var message_Path = "../../assets/message.json";
+                    var home_Path = 'https://fish-king.github.io/'               //此处可以修改为你的域名,必须带斜杠
+            </script>
+            <script type="text/javascript" src="../../assets/js/live2d.js"></script>
+            <script type="text/javascript" src="../../assets/js/message.js"></script>
+            <script type="text/javascript">
+                loadlive2d("live2d", "../../assets/model/tia/model.json");
+            </script>
+	</body>
+</html>
